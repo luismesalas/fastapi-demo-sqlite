@@ -1,37 +1,78 @@
 import csv
+import logging
 import os
 import sqlite3
 
+logging_format = '[%(asctime)s][%(levelname)s] %(message)s'
+logging.basicConfig(format=logging_format, level=logging.DEBUG)
+logging.getLogger().setLevel(level=logging.DEBUG)
+
+DB_FILE = "data/public_schools.db"
+CSV_FILE = "data/plantilla-organica-centros-publicos.csv"
+
 
 def delete_existing_db():
-    if os.path.exists('data/public_schools.db'):
-        os.remove('data/public_schools.db')
+    if os.path.exists(DB_FILE):
+        logging.info(f"Removing existing db in {DB_FILE}...")
+        os.remove(DB_FILE)
+        logging.info("Done.")
 
 
 def init_empty_db():
-    conn = sqlite3.connect('data/public_schools.db')
+    logging.info(f"Creating new db in {DB_FILE}...")
+    conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
+    logging.info("Creating tables schools, positions and assignments...")
     cursor.execute('CREATE TABLE schools (code integer, name text, province text, locality text)')
-    cursor.execute('CREATE TABLE positions (code integer, name text)')
-    cursor.execute('CREATE TABLE assignment (corps text, school integer, position integer, quantity integer)')
+    cursor.execute('CREATE TABLE positions (code integer, name text, corps text)')
+    cursor.execute('CREATE TABLE assignments (school integer, position integer, quantity integer)')
 
     conn.commit()
     conn.close()
+    logging.info("Done.")
+
+
+def load_dataset_from_csv():
+    logging.info(f"Loading data from CSV file in {CSV_FILE}...")
+    with open(CSV_FILE, newline='', encoding='iso-8859-1') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+
+        schools = {}
+        positions = {}
+        assignments = []
+
+        for row in csv_reader:
+            school_id, school_name = row['CENTRO'].split('-', 1)
+            position_id, position_name = row['PUESTO'].split('-', 1)
+            # We overwrite by school_id regarding it apears n-times. Province and locality are tied up to school
+            schools[school_id] = (school_id, school_name, row['PROVINCIA'], row['LOCALIDAD'])
+            # We overwrite by position_id regarding it apears n-times. Corps is tied up to position
+            positions[position_id] = (position_id, position_name, row['CUERPO'])
+            # Finally, we add all the relations between schools and positions, including the quantity of those positions
+            assignments.append((school_id, position_id, row['PLANTILLA']))
+
+    logging.info(f"Returned schools, positions and assignments as list of tuples.")
+    return list(schools.values()), list(positions.values()), assignments
 
 
 def load_data():
-    with open('data/plantilla-organica-centros-publicos.csv', newline='', encoding='iso-8859-1') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        schools = {}
-        positions = {}
-        assignements = []
-        for row in csv_reader:
-            schools[row['CENTRO']] = {row['CENTRO'],row['PROVINCIA'],row['LOCALIDAD']}
-            positions[row['PUESTO']] = {row['PUESTO']}
-            assignements.append(row)
+    schools, positions, assignments = load_dataset_from_csv()
+
+    logging.info(f"Inserting recors into {DB_FILE}...")
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    cursor.executemany("INSERT INTO schools (code, name, province, locality) values (?, ?, ?, ?)", schools)
+    cursor.executemany(f"INSERT INTO positions (code, name, corps) values (?, ?, ?)", positions)
+    cursor.executemany(f"INSERT INTO assignments (school, position, quantity) values (?, ?, ?)", assignments)
+
+    conn.commit()
+    conn.close()
+    logging.info(f"Done.")
 
 
 if __name__ == "__main__":
     delete_existing_db()
     init_empty_db()
+    load_data()

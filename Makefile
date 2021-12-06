@@ -4,7 +4,7 @@ venv:
 	venv/bin/python3 -m pip install -r requirements-dev.txt
 
 reset_db: venv
-	echo hola
+	python init_db.py
 
 docker_build:
 	docker build -t fastapi-demo-sqlite .

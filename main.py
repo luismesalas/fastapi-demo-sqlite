@@ -4,9 +4,10 @@ import api.v1.api as api_router_v1
 import uvicorn
 from fastapi import FastAPI
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.info("Starting server")
+logging_format = '[%(asctime)s][%(levelname)s] %(message)s'
+logging.basicConfig(format=logging_format, level=logging.DEBUG)
+logging.getLogger().setLevel(level=logging.DEBUG)
+logging.info("Starting server")
 
 
 def get_app():
