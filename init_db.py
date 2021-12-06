@@ -1,7 +1,8 @@
 import csv
 import logging
 import os
-import sqlite3
+
+from api.utils.db import db_cursor
 
 logging_format = '[%(asctime)s][%(levelname)s] %(message)s'
 logging.basicConfig(format=logging_format, level=logging.DEBUG)
@@ -20,16 +21,11 @@ def delete_existing_db():
 
 def init_empty_db():
     logging.info(f"Creating new db in {DB_FILE}...")
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-
-    logging.info("Creating tables schools, positions and assignments...")
-    cursor.execute('CREATE TABLE schools (code integer, name text, province text, locality text)')
-    cursor.execute('CREATE TABLE positions (code integer, name text, corps text)')
-    cursor.execute('CREATE TABLE assignments (school integer, position integer, quantity integer)')
-
-    conn.commit()
-    conn.close()
+    with db_cursor(DB_FILE) as cursor:
+        logging.info("Creating tables schools, positions and assignments...")
+        cursor.execute('CREATE TABLE schools (code integer, name text, province text, locality text)')
+        cursor.execute('CREATE TABLE positions (code integer, name text, corps text)')
+        cursor.execute('CREATE TABLE assignments (school integer, position integer, quantity integer)')
     logging.info("Done.")
 
 
@@ -60,15 +56,10 @@ def load_data():
     schools, positions, assignments = load_dataset_from_csv()
 
     logging.info(f"Inserting recors into {DB_FILE}...")
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-
-    cursor.executemany("INSERT INTO schools (code, name, province, locality) values (?, ?, ?, ?)", schools)
-    cursor.executemany(f"INSERT INTO positions (code, name, corps) values (?, ?, ?)", positions)
-    cursor.executemany(f"INSERT INTO assignments (school, position, quantity) values (?, ?, ?)", assignments)
-
-    conn.commit()
-    conn.close()
+    with db_cursor(DB_FILE) as cursor:
+        cursor.executemany("INSERT INTO schools (code, name, province, locality) values (?, ?, ?, ?)", schools)
+        cursor.executemany(f"INSERT INTO positions (code, name, corps) values (?, ?, ?)", positions)
+        cursor.executemany(f"INSERT INTO assignments (school, position, quantity) values (?, ?, ?)", assignments)
     logging.info(f"Done.")
 
 
