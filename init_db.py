@@ -23,8 +23,8 @@ def init_empty_db():
     with db_cursor(DB_FILE) as cursor:
         logging.info("Creating tables schools, positions and assignments...")
         cursor.execute('CREATE TABLE schools (code integer UNIQUE, name text, province text, locality text)')
-        cursor.execute('CREATE TABLE positions (code integer UNIQUE, name text, corps text)')
-        cursor.execute('CREATE TABLE assignments (school integer, position integer, quantity integer, '
+        cursor.execute('CREATE TABLE positions (code text UNIQUE, name text, corps text)')
+        cursor.execute('CREATE TABLE assignments (school integer, position text, quantity integer, '
                        'UNIQUE(school, position))')
     logging.info("Done.")
 

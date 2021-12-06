@@ -75,5 +75,6 @@ def update_db(db_file, table, field_id_name, field_id_value, fields_to_update):
 
 def delete_db(db_file, table, field_name, field_value):
     with db_cursor(db_file, commit=True) as cursor:
-        num_deleted = cursor.execute(f"DELETE FROM {table} where {field_name}={field_value}").rowcount
+        num_deleted = cursor.execute(f"DELETE FROM {table} where {field_name}= :{field_name}",
+                                     {field_name: field_value}).rowcount
         return num_deleted > 0
