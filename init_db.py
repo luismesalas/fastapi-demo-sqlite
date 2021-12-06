@@ -2,13 +2,12 @@ import csv
 import logging
 import os
 
-from api.utils.db import db_cursor
+from api.utils.db import db_cursor, DB_FILE
 
 logging_format = '[%(asctime)s][%(levelname)s] %(message)s'
 logging.basicConfig(format=logging_format, level=logging.DEBUG)
 logging.getLogger().setLevel(level=logging.DEBUG)
 
-DB_FILE = "data/public_schools.db"
 CSV_FILE = "data/plantilla-organica-centros-publicos.csv"
 
 
@@ -58,8 +57,8 @@ def load_data():
     logging.info(f"Inserting recors into {DB_FILE}...")
     with db_cursor(DB_FILE) as cursor:
         cursor.executemany("INSERT INTO schools (code, name, province, locality) values (?, ?, ?, ?)", schools)
-        cursor.executemany(f"INSERT INTO positions (code, name, corps) values (?, ?, ?)", positions)
-        cursor.executemany(f"INSERT INTO assignments (school, position, quantity) values (?, ?, ?)", assignments)
+        cursor.executemany("INSERT INTO positions (code, name, corps) values (?, ?, ?)", positions)
+        cursor.executemany("INSERT INTO assignments (school, position, quantity) values (?, ?, ?)", assignments)
     logging.info(f"Done.")
 
 
