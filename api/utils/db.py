@@ -28,11 +28,20 @@ def query_db(db_file, table, fields):
     if not fields:
         return query_db_all(db_file, table)
 
-    named_fields = []
-    for field_name in fields.keys():
-        named_fields.append(f"{field_name} = :{field_name}")
-
-    named_fields = ' AND '.join(named_fields)
+    named_fields = [f"{field_name} = :{field_name}" for field_name in fields.keys()]
+    named_fields_clause = ' AND '.join(named_fields)
 
     with db_cursor(db_file, commit=False) as cursor:
-        return cursor.execute(f"SELECT * FROM {table} where {named_fields}", fields).fetchall()
+        return cursor.execute(f"SELECT * FROM {table} where {named_fields_clause}", fields).fetchall()
+
+
+def insert_db(db_file, table, fields):
+    insert_fields_clause = ", ".join(fields.keys())
+    named_fields_clause = f":{', :'.join(fields.keys())}"
+
+    try:
+        with db_cursor(db_file, commit=True) as cursor:
+            cursor.execute(f"INSERT INTO {table} ({insert_fields_clause}) values ({named_fields_clause})", fields)
+    except sqlite3.IntegrityError:
+        return False
+    return True

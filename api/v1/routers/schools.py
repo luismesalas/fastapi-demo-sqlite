@@ -9,7 +9,7 @@ router = APIRouter()
 SCHOOLS_TABLE_NAME = 'schools'
 
 
-@router.get("/list")
+@router.get("")
 def list_schools(name: Optional[str] = None, province: Optional[str] = None,
                  locality: Optional[str] = None):
     fields = {}
@@ -21,6 +21,22 @@ def list_schools(name: Optional[str] = None, province: Optional[str] = None,
         fields['locality'] = locality
 
     return db.query_db(db_file=DB_FILE, table=SCHOOLS_TABLE_NAME, fields=fields)
+
+
+@router.post("")
+def insert_school(code: int, name: str, province: str, locality: str):
+    fields = {}
+    if code:
+        fields['code'] = code
+    if name:
+        fields['name'] = name
+    if province:
+        fields['province'] = province
+    if locality:
+        fields['locality'] = locality
+
+    # TODO if False, insert failed
+    return db.insert_db(db_file=DB_FILE, table=SCHOOLS_TABLE_NAME, fields=fields)
 
 
 # Order matters. This method should be at the end of the router for avoiding to override sub-path methods
