@@ -41,7 +41,24 @@ def insert_db(db_file, table, fields):
 
     try:
         with db_cursor(db_file, commit=True) as cursor:
-            cursor.execute(f"INSERT INTO {table} ({insert_fields_clause}) values ({named_fields_clause})", fields)
+            num_inserted = cursor.execute(f"INSERT INTO {table} ({insert_fields_clause}) "
+                                          f"values ({named_fields_clause})", fields).rowcount
+            return num_inserted > 0
     except sqlite3.IntegrityError:
         return False
-    return True
+
+
+def update_db(db_file, table, field_id_name, field_id_value, fields_to_update):
+    set_fields_clause = ", ".join([f"{field_name}= :{field_name}" for field_name in fields_to_update.keys()])
+    fields_to_update[field_id_name] = field_id_value
+
+    with db_cursor(db_file, commit=True) as cursor:
+        num_updated = cursor.execute(f"UPDATE {table} SET {set_fields_clause} "
+                                     f"WHERE {field_id_name}= :{field_id_name}", fields_to_update).rowcount
+        return num_updated > 0
+
+
+def delete_db(db_file, table, field_name, field_value):
+    with db_cursor(db_file, commit=True) as cursor:
+        num_deleted = cursor.execute(f"DELETE FROM {table} where {field_name}={field_value}").rowcount
+        return num_deleted > 0
