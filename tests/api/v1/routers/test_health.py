@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 import main
 
 client = TestClient(main.get_app())
-health_path = "/health"
 health_path_v1 = "/api/v1/health"
 
 
