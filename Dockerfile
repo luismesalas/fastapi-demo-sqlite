@@ -6,6 +6,7 @@ WORKDIR /usr/src/app
 
 # Copy sw and install pip dependencies
 COPY api ./api
+COPY data/public_schools.db ./data/public_schools.db
 COPY requirements.txt main.py docker-entrypoint.sh ./
 RUN pip install -r requirements.txt
 

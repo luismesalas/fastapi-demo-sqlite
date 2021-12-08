@@ -9,5 +9,11 @@ reset_db: venv
 docker_build:
 	docker build -t fastapi-demo-sqlite .
 
+docker_start:
+	docker run --rm --name=fastapi-demo-sqlite -p 5000:5000 fastapi-demo-sqlite
+
+docker_stop:
+	docker stop fastapi-demo-sqlite
+
 clean:
 	rm -rf venv
