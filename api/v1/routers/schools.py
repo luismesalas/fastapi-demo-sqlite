@@ -55,10 +55,10 @@ def insert_school(code: int, name: str, province: str, locality: str):
 def update_school(code: int, name: Optional[str] = None, province: Optional[str] = None,
                   locality: Optional[str] = None):
     if not name and not province and not locality:
-        raise JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
-                           content={"status_code": status.HTTP_400_BAD_REQUEST,
-                                    "detail": f"No fields to update in School with code {code}, "
-                                              f"please provide a new name, province or locality at least."})
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
+                            content={"status_code": status.HTTP_400_BAD_REQUEST,
+                                     "detail": f"No fields to update in School with code {code}, "
+                                               f"please provide a new name, province or locality at least."})
     fields = {}
     if name:
         fields['name'] = name

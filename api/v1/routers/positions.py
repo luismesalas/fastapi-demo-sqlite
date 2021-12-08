@@ -49,10 +49,10 @@ def insert_position(code: str, name: str, corps: str):
                            status.HTTP_409_CONFLICT: {"model": GenericExceptionMessage}})
 def update_position(code: str, name: Optional[str] = None, corps: Optional[str] = None):
     if not name and not corps:
-        raise JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
-                           content={"status_code": status.HTTP_400_BAD_REQUEST,
-                                    "detail": f"No fields to update in position with code {code}, "
-                                              f"please provide a new name, corps or locality at least."})
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
+                            content={"status_code": status.HTTP_400_BAD_REQUEST,
+                                     "detail": f"No fields to update in position with code {code}, "
+                                               f"please provide a new name, corps or locality at least."})
     fields = {}
     if name:
         fields['name'] = name
