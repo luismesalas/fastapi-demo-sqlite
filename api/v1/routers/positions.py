@@ -1,12 +1,13 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from starlette.responses import JSONResponse
 
 from api.model.generic import GenericMessage, GenericExceptionMessage
 from api.model.position import Position
 from api.utils import db
 from api.utils.db import DB_FILE
+from api.utils.login import validate_access_token
 
 router = APIRouter()
 POSITIONS_TABLE_NAME = 'positions'
@@ -68,8 +69,9 @@ def update_position(code: str, name: Optional[str] = None, corps: Optional[str] 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": f"Position with code {code} updated"})
 
 
-@router.delete("", responses={status.HTTP_200_OK: {"model": GenericMessage},
-                              status.HTTP_404_NOT_FOUND: {"model": GenericExceptionMessage}})
+@router.delete("", dependencies=[Depends(validate_access_token)],
+               responses={status.HTTP_200_OK: {"model": GenericMessage},
+                          status.HTTP_404_NOT_FOUND: {"model": GenericExceptionMessage}})
 def delete_position(code: str):
     if not db.delete_db(db_file=DB_FILE, table=POSITIONS_TABLE_NAME, field_name='code', field_value=code):
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,

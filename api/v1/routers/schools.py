@@ -1,12 +1,13 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from starlette.responses import JSONResponse
 
 from api.model.generic import GenericMessage, GenericExceptionMessage
 from api.model.school import School
 from api.utils import db
 from api.utils.db import DB_FILE
+from api.utils.login import validate_access_token
 
 router = APIRouter()
 SCHOOLS_TABLE_NAME = 'schools'
@@ -76,8 +77,9 @@ def update_school(code: int, name: Optional[str] = None, province: Optional[str]
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": f"School with code {code} updated"})
 
 
-@router.delete("", responses={status.HTTP_200_OK: {"model": GenericMessage},
-                              status.HTTP_404_NOT_FOUND: {"model": GenericExceptionMessage}})
+@router.delete("", dependencies=[Depends(validate_access_token)],
+               responses={status.HTTP_200_OK: {"model": GenericMessage},
+                          status.HTTP_404_NOT_FOUND: {"model": GenericExceptionMessage}})
 def delete_school(code: int):
     if not db.delete_db(db_file=DB_FILE, table=SCHOOLS_TABLE_NAME, field_name='code', field_value=code):
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
