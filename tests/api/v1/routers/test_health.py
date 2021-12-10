@@ -14,4 +14,4 @@ def test_get_health_on_api_v1_gets_200():
 
     # Then
     assert response.status_code == 200
-    assert response.text == '{"message":"API is alive"}'
+    assert response.json() == {"message": "API is alive"}

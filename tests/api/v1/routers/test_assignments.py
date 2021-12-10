@@ -24,10 +24,9 @@ def test_get_positions_in_a_school_200(mocker):
                                                      field_filters_left={'school': school_code_param},
                                                      field_filters_right={})
     assert response.status_code == status.HTTP_200_OK
-    assert response.text == '[{"position":' \
-                            '{"code":"00597036","name":"PEDAGOGÍA TERAPÉUTICA","corps":"MAESTROS"},"quantity":14},' \
-                            '{"position":' \
-                            '{"code":"00597037","name":"AUDICIÓN Y LENGUAJE","corps":"MAESTROS"},"quantity":1}]'
+    assert response.json() == [
+        {"position": {"code": "00597036", "name": "PEDAGOGÍA TERAPÉUTICA", "corps": "MAESTROS"}, "quantity": 14},
+        {"position": {"code": "00597037", "name": "AUDICIÓN Y LENGUAJE", "corps": "MAESTROS"}, "quantity": 1}]
 
 
 def test_get_schools_with_a_position_200(mocker):
@@ -47,7 +46,7 @@ def test_get_schools_with_a_position_200(mocker):
                                                      field_filters_right={})
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.text == '[{"school":{"code":14700377,"name":"I.E.S. CARMEN PANTIÓN","province":"CÓRDOBA",' \
-                            '"locality":"PRIEGO DE CÓRDOBA"},"quantity":1},' \
-                            '{"school":{"code":29006568,"name":"I.E.S. LOS MANANTIALES","province":"MÁLAGA",' \
-                            '"locality":"TORREMOLINOS"},"quantity":1}]'
+    assert response.json() == [{"school": {"code": 14700377, "name": "I.E.S. CARMEN PANTIÓN", "province": "CÓRDOBA",
+                                           "locality": "PRIEGO DE CÓRDOBA"}, "quantity": 1},
+                               {"school": {"code": 29006568, "name": "I.E.S. LOS MANANTIALES", "province": "MÁLAGA",
+                                           "locality": "TORREMOLINOS"}, "quantity": 1}]

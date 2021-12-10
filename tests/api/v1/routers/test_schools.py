@@ -22,12 +22,10 @@ def test_get_list_schools_without_params_gets_200(mocker):
     # Then
     db_query_mock.assert_called_once_with(db_file=DB_FILE, table='schools', fields={})
     assert response.status_code == status.HTTP_200_OK
-    assert response.text == '[{"code":4000018,"name":"C.E.I.P. JOAQUÍN TENA SICILIA",' \
-                            '"province":"ABLA","locality":"ALMERÍA"},' \
-                            '{"code":4000021,"name":"C.E.I.P. ANTONIO RELAÑO",' \
-                            '"province":"ABRUCENA","locality":"ALMERÍA"},' \
-                            '{"code":4602079,"name":"C.E.I.P. ABDERA",' \
-                            '"province":"ADRA","locality":"ALMERÍA"}]'
+    assert response.json() == [
+        {'code': 4000018, 'name': 'C.E.I.P. JOAQUÍN TENA SICILIA', 'province': 'ABLA', 'locality': 'ALMERÍA'},
+        {'code': 4000021, 'name': 'C.E.I.P. ANTONIO RELAÑO', 'province': 'ABRUCENA', 'locality': 'ALMERÍA'},
+        {'code': 4602079, 'name': 'C.E.I.P. ABDERA', 'province': 'ADRA', 'locality': 'ALMERÍA'}]
 
 
 def test_get_list_schools_with_all_params_gets_200(mocker):
@@ -48,5 +46,5 @@ def test_get_list_schools_with_all_params_gets_200(mocker):
                                                   'name': 'C.E.I.P FEDERICO GARCÍA LORCA', 'province': 'SEVILLA'})
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.text == '[{"code":41009172,"name":"C.E.I.P. FEDERICO GARCÍA LORCA",' \
-                            '"province":"DOS HERMANAS","locality":"SEVILLA"}]'
+    assert response.json() == [
+        {'code': 41009172, 'name': 'C.E.I.P. FEDERICO GARCÍA LORCA', 'province': 'DOS HERMANAS', 'locality': 'SEVILLA'}]
