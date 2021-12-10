@@ -9,7 +9,7 @@ assignments_path = "/api/v1/assignments"
 
 
 def test_get_positions_in_a_school_200(mocker):
-    # Given none
+    # Given
     school_code_param = 777777
     query_result = [(41009950, '00597036', 14, '00597036', 'PEDAGOGÍA TERAPÉUTICA', 'MAESTROS'),
                     (41009950, '00597037', 1, '00597037', 'AUDICIÓN Y LENGUAJE', 'MAESTROS')]
@@ -31,7 +31,7 @@ def test_get_positions_in_a_school_200(mocker):
 
 
 def test_get_schools_with_a_position_200(mocker):
-    # Given none
+    # Given
     position_param = "PI591201"
     query_result = [(14700377, 'PI591201', 1, 14700377, 'I.E.S. CARMEN PANTIÓN', 'CÓRDOBA', 'PRIEGO DE CÓRDOBA'),
                     (29006568, 'PI591201', 1, 29006568, 'I.E.S. LOS MANANTIALES', 'MÁLAGA', 'TORREMOLINOS')]
