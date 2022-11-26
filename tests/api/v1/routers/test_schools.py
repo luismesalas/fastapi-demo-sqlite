@@ -23,17 +23,18 @@ def test_get_list_schools_without_params_gets_200(mocker):
     db_query_mock.assert_called_once_with(db_file=DB_FILE, table='schools', fields={})
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [
-        {'code': 4000018, 'name': 'C.E.I.P. JOAQUÍN TENA SICILIA', 'province': 'ABLA', 'locality': 'ALMERÍA'},
-        {'code': 4000021, 'name': 'C.E.I.P. ANTONIO RELAÑO', 'province': 'ABRUCENA', 'locality': 'ALMERÍA'},
-        {'code': 4602079, 'name': 'C.E.I.P. ABDERA', 'province': 'ADRA', 'locality': 'ALMERÍA'}]
+        {'code': 4000018, 'locality': 'ABLA', 'name': 'C.E.I.P. JOAQUÍN TENA SICILIA', 'province': 'ALMERÍA'},
+        {'code': 4000021, 'locality': 'ABRUCENA', 'name': 'C.E.I.P. ANTONIO RELAÑO', 'province': 'ALMERÍA'},
+        {'code': 4602079, 'locality': 'ADRA', 'name': 'C.E.I.P. ABDERA', 'province': 'ALMERÍA'}
+    ]
 
 
 def test_get_list_schools_with_all_params_gets_200(mocker):
     # Given
-    school_name_param = 'C.E.I.P FEDERICO GARCÍA LORCA'
-    province_param = 'SEVILLA'
-    locality_param = 'DOS HERMANAS'
-    query_result = [(41009172, 'C.E.I.P. FEDERICO GARCÍA LORCA', 'SEVILLA', 'DOS HERMANAS')]
+    school_name_param = 'I.E.S. SAN MIGUEL'
+    province_param = 'HUELVA'
+    locality_param = 'JABUGO'
+    query_result = [(21700587, 'I.E.S. SAN MIGUEL', 'JABUGO', 'HUELVA')]
     db_query_mock = mocker.patch('api.v1.routers.assignments.db.query_db', return_value=query_result)
 
     # When
@@ -42,9 +43,9 @@ def test_get_list_schools_with_all_params_gets_200(mocker):
 
     # Then
     db_query_mock.assert_called_once_with(db_file=DB_FILE, table='schools',
-                                          fields={'locality': "DOS HERMANAS'",
-                                                  'name': 'C.E.I.P FEDERICO GARCÍA LORCA', 'province': 'SEVILLA'})
+                                          fields={'locality': "JABUGO'",
+                                                  'name': 'I.E.S. SAN MIGUEL', 'province': 'HUELVA'})
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [
-        {'code': 41009172, 'name': 'C.E.I.P. FEDERICO GARCÍA LORCA', 'province': 'DOS HERMANAS', 'locality': 'SEVILLA'}]
+        {'code': 21700587, 'name': 'I.E.S. SAN MIGUEL', 'province': 'JABUGO', 'locality': 'HUELVA'}]
