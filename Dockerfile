@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.10-slim
 LABEL maintainer="Luis Mesa <luismesalas@gmail.com>"
 
 # Create api directory
@@ -11,7 +11,7 @@ COPY requirements.txt main.py docker-entrypoint.sh ./
 RUN pip install -r requirements.txt
 
 # Starts our application
-CMD ["uvicorn", "main:get_app", "--host", "0.0.0.0", "--port", "5000", "--log-level", "debug"]
+CMD ["uvicorn", "main:get_app", "--host", "0.0.0.0", "--port", "5000", "--log-level", "info"]
 
 # Expose the port in which the application will be deployed
 EXPOSE 5000
