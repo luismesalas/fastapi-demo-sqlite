@@ -24,7 +24,7 @@ def list_schools(name: Optional[str] = None, province: Optional[str] = None,
     if locality:
         fields['locality'] = locality
 
-    return [School(code=row[0], name=row[1], locality=row[2], province=row[3])
+    return [School(code=row[0], name=row[1], province=row[2], locality=row[3])
             for row in db.query_db(db_file=DB_FILE, table=SCHOOLS_TABLE_NAME, fields=fields)]
 
 
@@ -100,4 +100,4 @@ def get_school_details(code: int):
                             content={"status_code": status.HTTP_404_NOT_FOUND,
                                      "detail": f"School with code {code} didn't exists in DB."})
 
-    return result[0]
+    return School(code=result[0][0], name=result[0][1], province=result[0][2], locality=result[0][3])

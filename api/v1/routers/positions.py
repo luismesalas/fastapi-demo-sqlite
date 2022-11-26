@@ -92,4 +92,4 @@ def get_position_details(code: str):
                             content={"status_code": status.HTTP_404_NOT_FOUND,
                                      "detail": f"Position with code {code} didn't exists in DB."})
 
-    return result[0]
+    return Position(code=result[0][0], name=result[0][1], corps=result[0][2])
