@@ -1,7 +1,7 @@
 from fastapi import Header, HTTPException, status
 
 BEARER_PREFIX = "Bearer "
-FAKE_VALID_TOKEN = "SNGULAR_DATA_AI"
+FAKE_VALID_TOKEN = "ABRE_LA_PUERTA_NINIA"
 
 
 def check_token_format(authorization):
