@@ -1,6 +1,7 @@
 from typing import Optional, List
 
 from fastapi import APIRouter, status, Depends
+from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
 from api.model.generic import GenericMessage, GenericExceptionMessage
@@ -71,7 +72,8 @@ def update_position(code: str, name: Optional[str] = None, corps: Optional[str] 
 
 @router.delete("", dependencies=[Depends(validate_access_token)],
                responses={status.HTTP_200_OK: {"model": GenericMessage},
-                          status.HTTP_404_NOT_FOUND: {"model": GenericExceptionMessage}})
+                          status.HTTP_404_NOT_FOUND: {"model": GenericExceptionMessage},
+                          status.HTTP_401_UNAUTHORIZED: {"model": BaseModel}})
 def delete_position(code: str):
     if not db.delete_db(db_file=DB_FILE, table=POSITIONS_TABLE_NAME, field_name='code', field_value=code):
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
